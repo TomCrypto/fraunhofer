@@ -64,3 +64,11 @@ Finally, there are some parameters in the `cl/def.cl` file, as follows:
         plane (see above for an explanation of why we do this). A small
         value will make the pattern very sharp, a high value will blur
         it out. Best is subjective, but less than 0.01 is nice.
+
+Todo
+----
+
+- Support non-square apertures (not sure if worth it or even possible)
+- Add support for arbitrary incident light wave spectrums (right now
+  only monochromatic light is used, perhaps reading a 1D spectral
+  image as a command-line argument?)
