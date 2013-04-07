@@ -71,6 +71,11 @@ Additional notes
 You can get cool transparent lens flare overlays from the resulting HDRI
 images by alphablending with black, by definition of wave superposition.
 
+This program wasn't designed to be extensible, so it's pretty quickly
+written. There are very few function calls, but it's quite readable.
+
+There is a decent OpenCL FFT implementation in `cl/fft.cl`, as well.
+
 Todo
 ----
 
