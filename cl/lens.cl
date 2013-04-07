@@ -8,11 +8,11 @@ void kernel cl_lens(global float4 *render, private Params dims,
     size_t index = get_global_id(0);
     PRNG prng = init(index, seed);
 
-	size_t px = index % dims.x, py = index / dims.x;
-	if (px < dims.x / 2) { px = dims.x - px; py = dims.y - py; }
+    size_t px = index % dims.x, py = index / dims.x;
+    if (px < dims.x / 2) { px = dims.x - px; py = dims.y - py; }
     float dx = BLUR * (rand(&prng) - 0.5f) + (float)px / dims.x;
     float dy = BLUR * (rand(&prng) - 0.5f) + (float)py / dims.y;
-	dx -= 0.5f; dy -= 0.5f;
+    dx -= 0.5f; dy -= 0.5f;
 
     float sx = dx * (wavelength / LAMBDA);
     float sy = dy * (wavelength / LAMBDA);

@@ -56,58 +56,58 @@ int main(int argc, char* argv[])
         std::string header; stream >> header;
         size_t resolution = 0;
 
-		if ((header != "P3") && (header != "P6")) return 0;
+        if ((header != "P3") && (header != "P6")) return 0;
         stream >> dim_x; if ((radix_x = radix(dim_x)) == 0) return 0;
         stream >> dim_y; if ((radix_y = radix(dim_y)) == 0) return 0;
         aperture.reserve(dim_x * dim_y);
-		stream >> resolution;
+        stream >> resolution;
 
         for (size_t y = 0; y < dim_y; ++y)
             for (size_t x = 0; x < dim_x; ++x)
             {
-				float R, G, B, A;
+                float R, G, B, A;
 
-				if (header == "P3")
-				{
-		            size_t r, g, b;
-		            stream >> r;
-		            stream >> g;
-		            stream >> b;
+                if (header == "P3")
+                {
+                    size_t r, g, b;
+                    stream >> r;
+                    stream >> g;
+                    stream >> b;
 
-		            R = (float)r / resolution;
-		            G = (float)g / resolution;
-		            B = (float)b / resolution;
-				}
-				else
-				{
-					if (resolution < 256)
-					{
-						uint8_t r, g, b;
-                   		stream.read((char*)&r, sizeof(uint8_t));
-                    	stream.read((char*)&g, sizeof(uint8_t));
-                    	stream.read((char*)&b, sizeof(uint8_t));
+                    R = (float)r / resolution;
+                    G = (float)g / resolution;
+                    B = (float)b / resolution;
+                }
+                else
+                {
+                    if (resolution < 256)
+                    {
+                        uint8_t r, g, b;
+                        stream.read((char*)&r, sizeof(uint8_t));
+                        stream.read((char*)&g, sizeof(uint8_t));
+                        stream.read((char*)&b, sizeof(uint8_t));
 
-						R = (float)r / resolution;
-				        G = (float)g / resolution;
-				        B = (float)b / resolution;
-					}
-					else
-					{
-						uint16_t r, g, b;
-                   		stream.read((char*)&r, sizeof(uint16_t));
-                    	stream.read((char*)&g, sizeof(uint16_t));
-                    	stream.read((char*)&b, sizeof(uint16_t));
+                        R = (float)r / resolution;
+                        G = (float)g / resolution;
+                        B = (float)b / resolution;
+                    }
+                    else
+                    {
+                        uint16_t r, g, b;
+                        stream.read((char*)&r, sizeof(uint16_t));
+                        stream.read((char*)&g, sizeof(uint16_t));
+                        stream.read((char*)&b, sizeof(uint16_t));
 
-						R = (float)r / resolution;
-				        G = (float)g / resolution;
-				        B = (float)b / resolution;
-					}
-				}
+                        R = (float)r / resolution;
+                        G = (float)g / resolution;
+                        B = (float)b / resolution;
+                    }
+                }
 
-	            if (threshold == 1) A = sqrt((R + G + B) / 3.0f);
-	            else A = (sqrt((R + G + B) / 3.0f) > threshold) ? 1 : 0;
-	            cl_float4 Aper = {{A, 0, 0, 0}};
-	            aperture.push_back(Aper);
+                if (threshold == 1) A = sqrt((R + G + B) / 3.0f);
+                else A = (sqrt((R + G + B) / 3.0f) > threshold) ? 1 : 0;
+                cl_float4 Aper = {{A, 0, 0, 0}};
+                aperture.push_back(Aper);
             }
     }
 

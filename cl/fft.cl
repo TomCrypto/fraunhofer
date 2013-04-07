@@ -1,6 +1,6 @@
 void kernel cl_fft_row(global float4 *v, private Params dims, constant uint *r)
 {
-	size_t row = get_global_id(0);
+    size_t row = get_global_id(0);
     for (size_t t = 0; t < dims.x; ++t)
         v[row * dims.x + r[t]].zw = v[row * dims.x + t].xy;
 
@@ -76,7 +76,7 @@ void kernel cl_fft_normalize(global float4 *v, private Params dims,
     size_t cy = (y + dims.y / 2) % dims.y * dims.x / dims.y;
 
     float2 A = v[cx * dims.x + cy].xy;
-	float far = pow(LAMBDA * lensDistance, 2);
+    float far = pow(LAMBDA * lensDistance, 2);
     float intensity = (A.x * A.x + A.y * A.y) / far;
     write_imagef(fraunhofer, (int2)(x, y), (float4)intensity);
 }
