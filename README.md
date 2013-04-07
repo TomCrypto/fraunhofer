@@ -30,8 +30,9 @@ The program takes three command-line arguments:
 - A number of passes (more is better, but slower)
 
 The aperture should have power of two dimensions, as the FFT implementation
-only supports these dimensions. The width and height can be different. Some
-demonstration apertures are provided in the `apertures` folder.
+only supports these dimensions. The width and height can be different (todo
+ - actually they cannot at the moment...). Some demonstration apertures are
+provided in the `apertures` folder.
 
 There are also a few additional options, set outside the command line - the
 `config.xml` file contains a few program settings:
