@@ -68,7 +68,7 @@ Finally, there are some parameters in the `cl/def.cl` file, as follows:
 Additional notes
 ----------------
 
-You can get cool transparent lens flare overlays from the resulting HDRI
+You can get cool transparent lens flare overlays from the resulting HDR
 images by alphablending with black, by definition of wave superposition.
 
 This program wasn't designed to be extensible, so it's pretty quickly
