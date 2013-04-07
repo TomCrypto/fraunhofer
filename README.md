@@ -65,6 +65,12 @@ Finally, there are some parameters in the `cl/def.cl` file, as follows:
         value will make the pattern very sharp, a high value will blur
         it out. Best is subjective, but less than 0.01 is nice.
 
+Additional notes
+----------------
+
+You can get cool transparent lens flare overlays from the resulting HDRI
+images by alphablending with black, by definition of wave superposition.
+
 Todo
 ----
 
