@@ -1,0 +1,50 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Executables and binaries
+bin/
+obj/
+
+# Documentation
+doc/
+
+# Swap and tmp files
+*.cpp~
+*.hpp~
+*.cl~
+*.md~
+*.swp
+*.swo
+*.swn
+*.swm
+*~
+
+# Renders and binary data
+excluded/
+*.ppm
+*.hdr
+
+# Logs
+*.log
+
+# Python tools
+tools/
+*.py
+*.py~
+
+# Code::Blocks stuff
+*.depend
+*.layout
+*.cbTemp
+*.out

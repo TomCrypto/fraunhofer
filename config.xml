@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<Settings>
+  <OpenCL Platform="0" Device="0" />
+  <FFT    Threshold="0.8" LensDistance="0.005" />
+</Settings>
