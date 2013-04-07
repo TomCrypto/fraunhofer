@@ -70,5 +70,5 @@ Todo
 
 - Support non-square apertures (not sure if worth it or even possible)
 - Add support for arbitrary incident light wave spectrums (right now
-  only monochromatic light is used, perhaps reading a 1D spectral
-  image as a command-line argument?)
+  only pure white light is used, perhaps reading a 1D spectral image
+  as a command-line argument?)
