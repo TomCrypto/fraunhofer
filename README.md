@@ -54,7 +54,7 @@ Finally, there are some parameters in the `cl/def.cl` file, as follows:
 - RINGING: controls the blade ringing, this is an aesthetic parameter,
            between 0 and infinity. small values make the aperture
            diffraction blades very thin, large values make them
-           larger and more spread out.
+           larger and more spread out. Default is 1.25.
 - ROTATE: controls how much spread there is in the diffraction pattern
           rotation (in real life, the aperture and observation plane i.e.
           sensor do not always stay immobile relative to each other, so
@@ -63,7 +63,7 @@ Finally, there are some parameters in the `cl/def.cl` file, as follows:
 - BLUR: controls the amount of blurring taking place in the observation
         plane (see above for an explanation of why we do this). A small
         value will make the pattern very sharp, a high value will blur
-        it out. Best is subjective, but less than 0.01 is nice.
+        it out. Best is subjective, but between 0.5 and 5 is nice.
 
 Additional notes
 ----------------
