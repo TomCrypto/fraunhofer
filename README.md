@@ -3,7 +3,7 @@ fraunhofer - Far-Field Lens Diffraction
 
 <p align="center">
 <img
-src="https://raw.github.com/TomCrypto/fraunhofer/master/renders/screenshot.png"
+src="https://raw.github.com/TomCrypto/fraunhofer/master/renders/circle.png"
 alt="Fraunhofer Diffraction Pattern"/>
 </p>
 
@@ -70,6 +70,29 @@ Additional notes
 
 You can get cool transparent lens flare overlays from the resulting HDR
 images by alphablending with black, by definition of wave superposition.
+
+In fact you can use this program to generate the white-light starburst
+pattern and then superimpose it on every pixel of an existing render,
+scaling its size and intensity based on the pixel's brightness and
+optionally colorizing it based on the pixel's color. The idea is that
+only very bright pixels (such as light sources or direct reflections
+thereof) actually get a big enough superimposed copy to be noticeable.
+
+This will effectively "augment" the render adding starburst effects.
+The secondary "ghost" effects are generally only visible for the
+brightest object and this tool does not help render them.
+
+There are a couple template apertures I cobbled up myself using my
+pathetic computer drawing skills:
+- "pupil" is a small aperture roughly corresponding to a human
+  pupil, with a few specks of dirt here and there. Not really
+  accurate but if you look at the screenshot, it looks good.
+- "circle_noise" is a circular aperture with some random noise
+  thrown in. It looks pretty spectacular although not particularly
+  realistic.
+- "pentagon_noise" is what it sounds like, a pentagon with noise. Note
+  that it produces 10 streaks instead of 5, because of how wave
+  superposition works (this is real and expected).
 
 This program wasn't designed to be extensible, so it's pretty quickly
 written. There are very few function calls, but it's quite readable.

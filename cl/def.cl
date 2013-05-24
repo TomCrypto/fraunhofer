@@ -15,5 +15,5 @@ constant sampler_t sampler = CLK_NORMALIZED_COORDS_TRUE |
 
 /* Colorization parameters. */
 #define RINGING 1.25f
-#define ROTATE 7
-#define BLUR 0.01f
+#define ROTATE 2.75f
+#define BLUR 3.5f

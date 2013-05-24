@@ -5,6 +5,79 @@
 #include <fstream>
 #include <cmath>
 
+/* These are some scene file definitions for color systems. */
+#define ID_EBU 0
+#define ID_SMPTE 1
+#define ID_HDTV 2
+#define ID_REC709 3
+#define ID_NTSC 4
+#define ID_CIE 5
+
+/* This is a color system. */
+typedef struct ColorSystem{
+    double xRed, yRed;	    	    /* Red x, y */
+    double xGreen, yGreen;  	    /* Green x, y */
+    double xBlue, yBlue;     	    /* Blue x, y */
+    double xWhite, yWhite;  	    /* White point x, y */
+	double gamma;   	    	    /* Gamma correction for system */
+} ColorSystem;
+
+/* These are some relatively common illuminants (white points). */
+#define IlluminantC     0.3101, 0.3162	    	/* For NTSC television */
+#define IlluminantD65   0.3127, 0.3291	    	/* For EBU and SMPTE */
+#define IlluminantE 	0.33333333, 0.33333333  /* CIE equal-energy illuminant */
+
+/* 0 represents a special gamma function. */
+#define GAMMA_REC709 0
+
+/* These are some standard color systems. */
+const ColorSystem /* xRed    yRed    xGreen  yGreen  xBlue  yBlue    White point        Gamma   */
+    EBUSystem    =  {0.64,   0.33,   0.29,   0.60,   0.15,   0.06,   IlluminantD65,  GAMMA_REC709},
+    SMPTESystem  =  {0.630,  0.340,  0.310,  0.595,  0.155,  0.070,  IlluminantD65,  GAMMA_REC709},
+    HDTVSystem   =  {0.670,  0.330,  0.210,  0.710,  0.150,  0.060,  IlluminantD65,  GAMMA_REC709},
+    Rec709System =  {0.64,   0.33,   0.30,   0.60,   0.15,   0.06,   IlluminantD65,  GAMMA_REC709},
+    NTSCSystem   =  {0.67,   0.33,   0.21,   0.71,   0.14,   0.08,   IlluminantC,    GAMMA_REC709},
+    CIESystem    =  {0.7355, 0.2645, 0.2658, 0.7243, 0.1669, 0.0085, IlluminantE,    GAMMA_REC709};
+
+void XYZtoRGB(float x, float y, float z, float *r, float *g, float *b, ColorSystem colorSystem)
+{
+	/* Decode the color system. */
+    float xr = colorSystem.xRed;   float yr = colorSystem.yRed;   float zr = 1 - (xr + yr);
+    float xg = colorSystem.xGreen; float yg = colorSystem.yGreen; float zg = 1 - (xg + yg);
+    float xb = colorSystem.xBlue;  float yb = colorSystem.yBlue;  float zb = 1 - (xb + yb);
+    float xw = colorSystem.xWhite; float yw = colorSystem.yWhite; float zw = 1 - (xw + yw);
+
+    /* Compute the XYZ to RGB matrix. */
+    float rx = (yg * zb) - (yb * zg);
+    float ry = (xb * zg) - (xg * zb);
+    float rz = (xg * yb) - (xb * yg);
+    float gx = (yb * zr) - (yr * zb);
+    float gy = (xr * zb) - (xb * zr);
+    float gz = (xb * yr) - (xr * yb);
+    float bx = (yr * zg) - (yg * zr);
+    float by = (xg * zr) - (xr * zg);
+    float bz = (xr * yg) - (xg * yr);
+
+    /* Compute the RGB luminance scaling factor. */
+    float rw = ((rx * xw) + (ry * yw) + (rz * zw)) / yw;
+    float gw = ((gx * xw) + (gy * yw) + (gz * zw)) / yw;
+    float bw = ((bx * xw) + (by * yw) + (bz * zw)) / yw;
+
+    /* Scale the XYZ to RGB matrix to white. */
+    rx = rx / rw;  ry = ry / rw;  rz = rz / rw;
+    gx = gx / gw;  gy = gy / gw;  gz = gz / gw;
+    bx = bx / bw;  by = by / bw;  bz = bz / bw;
+
+    /* Calculate the desired RGB. */
+    *r = (rx * x) + (ry * y) + (rz * z);
+    *g = (gx * x) + (gy * y) + (gz * z);
+    *b = (bx * x) + (by * y) + (bz * z);
+
+    /* Constrain the RGB color within the RGB gamut. */
+    float w = std::min(0.0f, std::min(*r, std::min(*g, *b)));
+	*r -= w; *g -= w; *b -= w;
+}
+
 cl::Program LoadProgram(cl::Context context, std::vector<cl::Device> devices)
 {
     const char* src = "#include <def.cl>\n"
@@ -226,25 +299,20 @@ int main(int argc, char* argv[])
         kernel.setArg(0, render);
         kernel.setArg(2, diff);
 
-        for (size_t t = 0; t < samples; ++t)
-        {
-            uint64_t seed = t;
-            float lambda = (float)t / samples;
-            kernel.setArg(4, sizeof(cl_float), &lambda);
-            kernel.setArg(5, sizeof(uint64_t), &seed);
+		cl_uint sampleCount = samples, seed = 0;
+		kernel.setArg(4, sizeof(cl_uint), &sampleCount);
+		kernel.setArg(5, sizeof(uint64_t), &seed);
 
-            cl::NDRange offset(0), global(dim_x * dim_y);
-            queue.enqueueNDRangeKernel(kernel, offset, global, cl::NullRange);
-        }
-
+        cl::NDRange offset(0), global(dim_x * dim_y);
+        queue.enqueueNDRangeKernel(kernel, offset, global, cl::NullRange);
         queue.enqueueReadBuffer(render, CL_TRUE, 0, size, &aperture[0]);
     }
 
     std::fstream stream(argv[2], std::ios::out | std::ios::binary);
 
     stream << "#?RADIANCE" << std::endl;
-    stream << "SOFTWARE=lensfft" << std::endl;
-    stream << "FORMAT=32-bit_rle_xyze" << std::endl << std::endl;
+    stream << "SOFTWARE=fraunhofer" << std::endl;
+    stream << "FORMAT=32-bit_rle_rgbe" << std::endl << std::endl;
     stream << "-Y " << dim_y << " +X " << dim_x << std::endl;
 
     for (size_t y = 0; y < dim_y; ++y)
@@ -265,6 +333,13 @@ int main(int argc, char* argv[])
             a = sqrt(a);
             b = sqrt(b);
             c = sqrt(c);
+
+			/* This is TEMPORARY as the code is supposed to output
+			 * the render in XYZ format. However, apparently handling
+			 * XYZ colors is so mind-blowingly difficult that HDR
+			 * viewers aren't capable of doing so, so at the moment
+			 * we're outputting in RGB as a stopgap solution. */
+			XYZtoRGB(a, b, c, &a, &b, &c, CIESystem);
 
             float m = std::max(a, std::max(b, c));
             uint8_t pe = ceil(log(m) / log(2.0f) + 128);
